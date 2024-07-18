@@ -6,7 +6,7 @@ import fs from 'fs-extra';
 import Jimp from 'jimp-compact';
 import * as path from 'path';
 
-import { IOSSplashConfig } from './getIosSplashConfig';
+import { IOSPluginConfig } from './getIosSplashConfig';
 import {
   ContentsJsonImage,
   ContentsJsonImageAppearance,
@@ -23,7 +23,7 @@ const DARK_PNG_FILENAME = 'dark_image';
 const TABLET_PNG_FILENAME = 'tablet_image';
 const DARK_TABLET_PNG_FILENAME = 'dark_tablet_image';
 
-export const withIosSplashAssets: ConfigPlugin<IOSSplashConfig> = (config, splash) => {
+export const withIosSplashAssets: ConfigPlugin<IOSPluginConfig> = (config, splash) => {
   if (!splash) {
     return config;
   }
@@ -39,6 +39,7 @@ export const withIosSplashAssets: ConfigPlugin<IOSSplashConfig> = (config, splas
         darkImage: splash.dark?.image,
         tabletImage: splash.tabletImage,
         darkTabletImage: splash.dark?.tabletImage,
+        logoWidth: splash.logoWidth ?? 100,
       });
 
       return config;
@@ -56,6 +57,7 @@ async function configureImageAssets({
   darkImage,
   tabletImage,
   darkTabletImage,
+  logoWidth,
 }: {
   projectRoot: string;
   iosNamedProjectRoot: string;
@@ -63,6 +65,7 @@ async function configureImageAssets({
   darkImage?: string | null;
   tabletImage: string | null;
   darkTabletImage?: string | null;
+  logoWidth: number;
 }) {
   const imageSetPath = path.resolve(iosNamedProjectRoot, IMAGESET_PATH);
 
@@ -88,6 +91,7 @@ async function configureImageAssets({
     darkImage,
     tabletImage,
     darkTabletImage,
+    logoWidth,
   });
 }
 
@@ -98,6 +102,7 @@ async function copyImageFiles({
   darkImage,
   tabletImage,
   darkTabletImage,
+  logoWidth,
 }: {
   projectRoot: string;
   iosNamedProjectRoot: string;
@@ -105,6 +110,7 @@ async function copyImageFiles({
   darkImage?: string | null;
   tabletImage?: string | null;
   darkTabletImage?: string | null;
+  logoWidth: number;
 }) {
   const logo = await Jimp.read(image);
 
@@ -114,12 +120,15 @@ async function copyImageFiles({
       { ratio: 2, suffix: '@2x' },
       { ratio: 3, suffix: '@3x' },
     ].map(({ ratio, suffix }) => {
-      const filePath = path.resolve(iosNamedProjectRoot, IMAGESET_PATH, `image${suffix}.png`);
+      const filePath = path.resolve(
+        iosNamedProjectRoot,
+        IMAGESET_PATH,
+        `${PNG_FILENAME}${suffix}.png`
+      );
 
-      return logo
-        .clone()
-        .resize(100 * ratio, Jimp.AUTO)
-        .writeAsync(filePath);
+      const size = logoWidth * ratio;
+      const height = Math.ceil(size * (logo.bitmap.height / logo.bitmap.width));
+      return logo.clone().resize(size, height).writeAsync(filePath);
     })
   );
 
@@ -186,17 +195,17 @@ export function buildContentsJsonImages({
     // Phone light
     createContentsJsonItem({
       idiom: 'universal',
-      filename: 'image.png',
+      filename: `${image}.png`,
       scale: '1x',
     }),
     createContentsJsonItem({
       idiom: 'universal',
-      filename: 'image@2x.png',
+      filename: `${image}@2x.png`,
       scale: '2x',
     }),
     createContentsJsonItem({
       idiom: 'universal',
-      filename: 'image@3x.png',
+      filename: `${image}@3x.png`,
       scale: '3x',
     }),
     // Phone dark
