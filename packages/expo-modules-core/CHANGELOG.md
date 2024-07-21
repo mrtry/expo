@@ -59,6 +59,10 @@
 - [Android] Bump Kotlin coroutines version to 1.7.3. ([#30226](https://github.com/expo/expo/pull/30226) by [@lukmccall](https://github.com/lukmccall))
 - [Android] Limit the number of "Current Activity is of incorrect class" log entries. ([#30427](https://github.com/expo/expo/pull/30427) by [@lukmccall](https://github.com/lukmccall))
 
+### ⚠️ Notices
+
+- Added support for React Native 0.75.x. ([#30034](https://github.com/expo/expo/pull/30034) by [@gabrieldonadel](https://github.com/gabrieldonadel))
+
 ## 1.12.16 - 2024-06-20
 
 ### 🐛 Bug fixes
