@@ -85,11 +85,6 @@ describe(withIosSplashScreen, () => {
 
     // Image is not defined
     expect(after['HelloWorld/Images.xcassets/SplashScreen.imageset/image.png']).not.toBeDefined();
-    // Ensure colors are created
-
-    expect(
-      after['HelloWorld/Images.xcassets/SplashScreenBackground.imageset/image.png']
-    ).toBeDefined();
   });
 
   it(`runs entire process`, async () => {
@@ -122,6 +117,8 @@ describe(withIosSplashScreen, () => {
 
     // Test Results
 
+    console.log({ config });
+
     expect(config).toBeDefined();
 
     const infoPlist = await readPlistAsync('/app/ios/HelloWorld/Info.plist');
@@ -132,22 +129,9 @@ describe(withIosSplashScreen, () => {
     // Image is defined
     expect(after['HelloWorld/Images.xcassets/SplashScreen.imageset/image.png']).toBeDefined();
 
-    // Ensure colors are created
-    expect(after['HelloWorld/Images.xcassets/SplashScreenBackground.imageset/image.png']).toMatch(
-      /PNG/
-    );
-
-    expect(
-      after['HelloWorld/Images.xcassets/SplashScreenBackground.imageset/dark_image.png']
-    ).toMatch(/PNG/);
-
-    // Image JSON
-    expect(
-      after['HelloWorld/Images.xcassets/SplashScreenBackground.imageset/Contents.json']
-    ).toBeDefined();
-
     // Ensure images are created
-    expect(after['HelloWorld/Images.xcassets/SplashScreen.imageset/image.png']).toMatch(/PNG/);
+    expect(after['HelloWorld/Images.xcassets/SplashScreen.imageset/image@2x.png']).toMatch(/PNG/);
+    expect(after['HelloWorld/Images.xcassets/SplashScreen.imageset/image@3x.png']).toMatch(/PNG/);
 
     expect(after['HelloWorld/Images.xcassets/SplashScreen.imageset/dark_image.png']).toMatch(/PNG/);
 
